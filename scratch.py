@@ -18,7 +18,7 @@ async def main():
             filter='where name = "Transformers: War for Cybertron"'
         )
         if result:
-            print(await result.resolve_links())
+            print(await result.resolve_links(depth=4))
 
 
 asyncio.run(main())

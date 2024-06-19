@@ -23,6 +23,8 @@ class IDWrapper:
                 await client.build_query(_type, ids=ids, limit=step, offset=step * i)
             )
 
+        for r in results:
+            r["client"] = client
         return results
 
 
@@ -39,9 +41,8 @@ class BaseApiModel(BaseModel):
     id: int
 
     def __init__(self, client: BaseClient = None, **data):
-        super().__init__(**data)
-        if client:
-            self._client = client
+        super().__init__(client=client, **data)
+        self._client = client
 
     @classmethod
     async def from_request(
@@ -67,7 +68,7 @@ class BaseApiModel(BaseModel):
             limit=limit,
             offset=offset,
         )
-        return [cls(client, **r) for r in result]
+        return [cls(client=client, **r) for r in result]
 
     @property
     def client(self):
@@ -103,7 +104,11 @@ class BaseApiModel(BaseModel):
 
         return fields
 
-    async def resolve_links(self, fields: list[str] | None = None):
+    async def resolve_links(
+        self, fields: list[str] | None = None, depth: int = 1, visited: list[str] = []
+    ):
+        if depth == 0:
+            return self.model_dump()
         if fields:
             to_resolve = {}
             for field, wrapper in self.id_fields.items():
@@ -119,9 +124,14 @@ class BaseApiModel(BaseModel):
                     resolved = None
                 else:
                     if type(getattr(self, field)) == int:
-                        resolved = await wrapper.resolve(
-                            self.client, [getattr(self, field)]
-                        )
+                        try:
+                            resolved = (
+                                await wrapper.resolve(
+                                    self.client, [getattr(self, field)]
+                                )
+                            )[0]
+                        except IndexError:
+                            resolved = None
                     else:
                         if len(getattr(self, field, [])) > 0:
                             resolved = await wrapper.resolve(
@@ -133,5 +143,27 @@ class BaseApiModel(BaseModel):
                 resolved = None
 
             result[field] = resolved
-
-        return self.client.REGISTRY[self.type](self.client, **result)
+        serialized: "BaseApiModel" = self.client.REGISTRY[self.type](
+            client=self.client, **result
+        )
+        for key, val in serialized.__dict__.items():
+            if isinstance(val, BaseApiModel):
+                if not f"{self.type}:{key}:{val.id}" in visited:
+                    visited.append(f"{self.type}:{key}:{val.id}")
+                    setattr(
+                        serialized,
+                        key,
+                        await val.resolve_links(depth=depth - 1, visited=visited),
+                    )
+            if type(val) == list and any([isinstance(i, BaseApiModel) for i in val]):
+                new_vals = []
+                for _val in val:
+                    if not f"{self.type}:{key}:{_val.id}" in visited:
+                        visited.append(f"{self.type}:{key}:{_val.id}")
+                        new_vals.append(
+                            await _val.resolve_links(depth=depth - 1, visited=visited)
+                        )
+                    else:
+                        new_vals.append(_val)
+                setattr(serialized, key, new_vals)
+        return serialized
