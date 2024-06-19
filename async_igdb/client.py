@@ -89,3 +89,31 @@ class BaseClient:
         )
         result.raise_for_status()
         return result.json()
+
+    async def build_query(
+        self,
+        endpoint: str,
+        fields: list[str] | Literal["*"] = "*",
+        ids: list[int] | None = None,
+        exclude: list[str] | None = None,
+        filter: str | None = None,
+        sort_field: str | None = None,
+        sort_direction: Literal["asc", "desc"] = "asc",
+        search: str | None = None,
+        limit: int = 10,
+        offset: int = 0,
+    ) -> dict[str, Any]:
+        queries = []
+        if ids != None:
+            queries.append(f"where id = ({','.join(ids)})")
+        if exclude != None:
+            queries.append(f"exclude")
+        if filter:
+            queries.append(filter)
+        if sort_field:
+            queries.append(f"sort {sort_field} {sort_direction}")
+        if search:
+            queries.append(f'search "{search}"')
+        queries.append(f"limit {limit}")
+        queries.append(f"offset {offset}")
+        return await self.request(endpoint, fields, queries=queries)

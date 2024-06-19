@@ -12,7 +12,7 @@ async def main():
     client_secret = os.getenv("IGDB_SECRET")
 
     async with BaseClient(client_id, client_secret=client_secret) as client:
-        result = await client.request("/games", queries=['search "Mario Kart"'])
+        result = await client.request("/platforms", queries=["limit 500"])
         print(json.dumps(result, indent=4))
 
 
