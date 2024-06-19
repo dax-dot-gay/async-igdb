@@ -5,7 +5,7 @@ from .client import BaseClient
 TModel = TypeVar("TModel", bound=BaseApiModel)
 
 
-class ApiObjectManager:
+class ApiObjectManager[TModel]:
     def __init__(self, client: BaseClient, model_factory: Type[TModel]):
         self.client = client
         self.model_factory = model_factory
@@ -89,7 +89,7 @@ class ApiObjectManager:
         sort_field: str | None = None,
         sort_direction: Literal["asc", "desc"] = "asc",
         search: str | None = None,
-    ):
+    ) -> AsyncGenerator[TModel, None]:
         async for page in self.find_paginated(
             ids=ids,
             filter=filter,

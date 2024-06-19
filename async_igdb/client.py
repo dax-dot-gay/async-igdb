@@ -9,6 +9,8 @@ BASE_URL = "https://api.igdb.com/v4/{endpoint}"
 
 
 class BaseClient:
+    REGISTRY: dict[str, "BaseClient"] = {}
+
     def __init__(
         self, client_id: str, access_token: str = None, client_secret: str = None
     ):
@@ -111,7 +113,7 @@ class BaseClient:
     ) -> list[dict[str, Any]]:
         queries = []
         if ids != None:
-            queries.append(f"where id = ({','.join(ids)})")
+            queries.append(f"where id = ({','.join([str(i) for i in ids])})")
         if exclude != None:
             queries.append(f"exclude")
         if filter:

@@ -30,6 +30,9 @@ dev = [
     "python-dotenv"
 ]
 
+[tool.pyright]
+reportInvalidTypeForm = false
+
 [project.urls]
 Homepage = "https://github.com/iTecAI/async-igdb"
 Repository = "https://github.com/iTecAI/async-igdb.git"
