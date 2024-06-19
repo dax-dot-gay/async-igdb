@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import IntEnum
 
 
-class AgeRatingCategoryEnum(Enum):
+class AgeRatingCategoryEnum(IntEnum):
     ESRB = 1
     PEGI = 2
     CERO = 3
@@ -11,7 +11,7 @@ class AgeRatingCategoryEnum(Enum):
     ACB = 7
 
 
-class AgeRatingEnum(Enum):
+class AgeRatingEnum(IntEnum):
     Three = 1
     Seven = 2
     Twelve = 3
@@ -53,7 +53,7 @@ class AgeRatingEnum(Enum):
     ACB_RC = 39
 
 
-class AgeRatingContentDescriptionEnum(Enum):
+class AgeRatingContentDescriptionEnum(IntEnum):
     ESRB_alcohol_reference = 1
     ESRB_animated_blood = 2
     ESRB_blood = 3
@@ -141,13 +141,13 @@ class AgeRatingContentDescriptionEnum(Enum):
     CLASS_IND_atos_criminosos = 85
 
 
-class CharacterGenderEnum(Enum):
+class CharacterGenderEnum(IntEnum):
     Male = 0
     Female = 1
     Other = 2
 
 
-class CharacterSpeciesEnum(Enum):
+class CharacterSpeciesEnum(IntEnum):
     Human = 1
     Alien = 2
     Animal = 3
@@ -155,7 +155,7 @@ class CharacterSpeciesEnum(Enum):
     Unknown = 5
 
 
-class DateCategoryEnum(Enum):
+class DateCategoryEnum(IntEnum):
     YYYYMMMMDD = 0
     YYYYMMMM = 1
     YYYY = 2
@@ -166,7 +166,7 @@ class DateCategoryEnum(Enum):
     TBD = 7
 
 
-class CompanySiteCategoryEnum(Enum):
+class CompanySiteCategoryEnum(IntEnum):
     official = 1
     wikia = 2
     wikipedia = 3
@@ -186,7 +186,7 @@ class CompanySiteCategoryEnum(Enum):
     discord = 18
 
 
-class ExternalGameCategoryEnum(Enum):
+class ExternalGameCategoryEnum(IntEnum):
     steam = 1
     gog = 5
     youtube = 10
@@ -209,12 +209,12 @@ class ExternalGameCategoryEnum(Enum):
     gamejolt = 55
 
 
-class ExternalGameMediaEnum(Enum):
+class ExternalGameMediaEnum(IntEnum):
     digital = 1
     physical = 2
 
 
-class GameCategoryEnum(Enum):
+class GameCategoryEnum(IntEnum):
     main_game = 0
     dlc_addon = 1
     expansion = 2
@@ -232,7 +232,7 @@ class GameCategoryEnum(Enum):
     update = 14
 
 
-class GameStatusEnum(Enum):
+class GameStatusEnum(IntEnum):
     released = 0
     alpha = 2
     beta = 3
@@ -243,18 +243,18 @@ class GameStatusEnum(Enum):
     delisted = 8
 
 
-class GameVersionFeatureCategoryEnum(Enum):
+class GameVersionFeatureCategoryEnum(IntEnum):
     boolean = 0
     description = 1
 
 
-class GameVersionFeatureValueIncludedFeatureEnum(Enum):
+class GameVersionFeatureValueIncludedFeatureEnum(IntEnum):
     NOT_INCLUDED = 0
     INCLUDED = 1
     PRE_ORDER_ONLY = 2
 
 
-class PlatformCategoryEnum(Enum):
+class PlatformCategoryEnum(IntEnum):
     console = 1
     arcade = 2
     platform = 3
@@ -263,7 +263,7 @@ class PlatformCategoryEnum(Enum):
     computer = 6
 
 
-class RegionEnum(Enum):
+class RegionEnum(IntEnum):
     europe = 1
     north_america = 2
     australia = 3
@@ -276,7 +276,7 @@ class RegionEnum(Enum):
     brazil = 10
 
 
-class PlatformWebsiteCategoryEnum(Enum):
+class PlatformWebsiteCategoryEnum(IntEnum):
     official = 1
     wikia = 2
     wikipedia = 3
@@ -298,7 +298,7 @@ class PlatformWebsiteCategoryEnum(Enum):
     soundcloud = 20
 
 
-class WebsiteCategoryEnum(Enum):
+class WebsiteCategoryEnum(IntEnum):
     official = 1
     wikia = 2
     wikipedia = 3

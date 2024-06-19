@@ -81,13 +81,19 @@ class BaseClient:
         endpoint: str,
         fields: Literal["*"] | list[str] = "*",
         queries: list[str] = [],
-    ) -> dict[str, Any]:
+    ) -> list[dict[str, Any]]:
+        body = f"fields {'*' if fields == '*' else ','.join(fields)};{' ' + '; '.join(queries) + ';' if len(queries) > 0 else ''}"
         result = await self.client.post(
             BASE_URL.format(endpoint=endpoint.lstrip("/")),
             headers={"Accept": "application/json"},
-            data=f"fields {'*' if fields == '*' else ','.join(fields)};{' ' + '; '.join(queries) + ';' if len(queries) > 0 else ''}",
+            data=body,
         )
-        result.raise_for_status()
+
+        if result.status_code == 429:
+            await asyncio.sleep(0.5)
+            return await self.request(endpoint, fields=fields, queries=queries)
+        else:
+            result.raise_for_status()
         return result.json()
 
     async def build_query(
@@ -102,7 +108,7 @@ class BaseClient:
         search: str | None = None,
         limit: int = 10,
         offset: int = 0,
-    ) -> dict[str, Any]:
+    ) -> list[dict[str, Any]]:
         queries = []
         if ids != None:
             queries.append(f"where id = ({','.join(ids)})")
