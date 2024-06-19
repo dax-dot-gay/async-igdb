@@ -4,7 +4,18 @@ from .manager import ApiObjectManager
 
 
 class IGDBClient(BaseClient):
-    REGISTRY = {"characters": CharacterModel, "games": GameModel}
+    REGISTRY = {
+        "characters": CharacterModel,
+        "games": GameModel,
+        "character_mug_shots": CharacterMugShotModel,
+        "age_ratings": AgeRatingModel,
+        "collection_relation_types": CollectionRelationTypeModel,
+        "collection_relations": CollectionRelationModel,
+        "age_rating_content_descriptions": AgeRatingContentDescriptionModel,
+        "alternative_names": AlternativeNameModel,
+        "artworks": ArtworkModel,
+        "collection_types": CollectionTypeModel,
+    }
 
     @property
     def characters(self) -> ApiObjectManager[CharacterModel]:

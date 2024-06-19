@@ -20,16 +20,21 @@ class IDWrapper:
             _type = self.factory.type
         for i in range(0, math.ceil(len(ids) / step)):
             results.extend(
-                await client.build_query(_type, ids=ids, limit=step, offset=step * i)
+                [
+                    client.REGISTRY[_type](client=client, **i)
+                    for i in await client.build_query(
+                        _type, ids=ids, limit=step, offset=step * i
+                    )
+                ]
             )
-
-        for r in results:
-            r["client"] = client
         return results
 
 
 def ids(base: Type[TBase] | str):
-    return Annotated[list[int] | int, IDWrapper(base)]
+    if type(base) == str:
+        return Annotated[list[int] | int, IDWrapper(base)] | None
+    else:
+        return Annotated[list[int] | int, IDWrapper(base)] | TBase | list[TBase] | None
 
 
 class BaseApiModel(BaseModel):
@@ -108,7 +113,7 @@ class BaseApiModel(BaseModel):
         self, fields: list[str] | None = None, depth: int = 1, visited: list[str] = []
     ):
         if depth == 0:
-            return self.model_dump()
+            return self
         if fields:
             to_resolve = {}
             for field, wrapper in self.id_fields.items():

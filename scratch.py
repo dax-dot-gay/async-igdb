@@ -18,7 +18,11 @@ async def main():
             filter='where name = "Transformers: War for Cybertron"'
         )
         if result:
-            print(await result.resolve_links(depth=4))
+            with open("test.json", "w") as f:
+                print(
+                    (await result.resolve_links(depth=4)).model_dump_json(indent=4),
+                    file=f,
+                )
 
 
 asyncio.run(main())

@@ -1,18 +1,20 @@
 from datetime import datetime
 from typing import Union
-from .base import BaseApiModel, ids
-from ..util.enums import *
+from ..base import BaseApiModel, ids
+from .age_rating import AgeRatingModel
+from ..simple import *
+from ...util.enums import *
 
 
 class GameModel(BaseApiModel):
     type = "games"
     searchable = True
 
-    age_ratings: list[int] = []
+    age_ratings: ids(AgeRatingModel) = []
     aggregated_rating: float = 0.0
     aggregated_rating_count: int = 0
-    alternative_names: list[int] = []
-    artworks: list[int] = []
+    alternative_names: ids(AlternativeNameModel) = []
+    artworks: ids(ArtworkModel) = []
     bundles: ids("games") | list["GameModel"] = []
     category: GameCategoryEnum = GameCategoryEnum.main_game
     checksum: str | None = None
@@ -61,22 +63,3 @@ class GameModel(BaseApiModel):
     version_title: str | None = None
     videos: list[int] = []
     websites: list[int] = []
-
-
-class CharacterModel(BaseApiModel):
-    type = "characters"
-    searchable = True
-
-    akas: list[str] = []
-    checksum: str | None = None
-    country_name: str | None = None
-    created_at: datetime | None = None
-    description: str | None = None
-    games: ids(GameModel) | list[GameModel] = []
-    gender: CharacterGenderEnum = CharacterGenderEnum.Other
-    mug_shot: int | None = None
-    name: str | None = None
-    slug: str | None = None
-    species: CharacterSpeciesEnum = CharacterSpeciesEnum.Unknown
-    updated_at: datetime | None = None
-    url: str | None = None
