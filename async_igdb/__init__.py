@@ -1,7 +1,12 @@
+from typing import TypeVar
+
+from async_igdb.models.base import IDWrapper
 from .client import BaseClient
 from .models import *
 from . import models
 from .manager import ApiObjectManager
+
+TRoot = TypeVar("TRoot", bound=BaseApiModel)
 
 
 class IGDBClient(BaseClient):
@@ -265,3 +270,113 @@ def {endpoint}(self) -> ApiObjectManager[{model}]:
         return await SearchResultModel.from_request(
             self, search=query, limit=limit, offset=offset
         )
+
+    async def resolve_links(
+        self, roots: list[TRoot] | TRoot, max_depth: int = 1
+    ) -> list[TRoot] | TRoot:
+        if type(roots) == list:
+            to_resolve: list[TRoot] = roots[:]
+            return_list = True
+        else:
+            to_resolve: list[TRoot] = [roots]
+            return_list = False
+
+        result = await self._resolve_array(to_resolve, max_depth, [])
+        if return_list:
+            return result
+        return result[0]
+
+    async def _resolve_array(
+        self, roots: list[TRoot], depth: int, visited: list[str]
+    ) -> list[TRoot]:
+        if depth == 0:
+            return roots
+
+        if len(roots) == 0:
+            return roots
+
+        if not all([i.type == roots[0].type for i in roots]):
+            raise ValueError("Array of models is non-homogenous")
+
+        fields = roots[0].id_fields
+        field_map: dict[str, tuple[IDWrapper, list[int]]] = {}
+        new_visited = []
+        for field in fields.keys():
+            field_map[field] = (fields[field], [])
+            for root in roots:
+                field_val = getattr(root, field)
+                index = None
+                if type(field_val) == list:
+                    index = []
+                    for item in field_val:
+                        if type(item) == int:
+                            index.append(item)
+                        elif isinstance(item, BaseApiModel):
+                            index.append(item.id)
+                elif type(field_val) == int:
+                    index = field_val
+                elif isinstance(field_val, BaseApiModel):
+                    index = field_val.id
+
+                if type(index) == list:
+                    for _index in index:
+                        if not _index in field_map[field][1]:
+                            field_map[field][1].append(_index)
+                            if (
+                                not f"{fields[field].type}:{_index}" in visited
+                                and not f"{fields[field].type}:{_index}" in new_visited
+                            ):
+                                new_visited.append(f"{fields[field].type}:{_index}")
+                else:
+                    if index != None and not index in field_map[field][1]:
+                        field_map[field][1].append(index)
+                        if (
+                            not f"{fields[field].type}:{index}" in visited
+                            and not f"{fields[field].type}:{index}" in new_visited
+                        ):
+                            new_visited.append(f"{fields[field].type}:{index}")
+
+        resolved_fields: dict[str, dict[int, BaseApiModel]] = {}
+        for field_key, field_params in field_map.items():
+            resolved: list[BaseApiModel] = await field_params[0].resolve(
+                self, field_params[1]
+            )
+            to_traverse = []
+            for i in resolved:
+                if not f"{field_params[0].type}:{i.id}" in visited:
+                    if f"{field_params[0].type}:{i.id}" in new_visited:
+                        new_visited.remove(f"{field_params[0].type}:{i.id}")
+                    visited.append(f"{field_params[0].type}:{i.id}")
+                    to_traverse.append(i)
+            traversed = {
+                i.id: i
+                for i in await self._resolve_array(to_traverse, depth - 1, visited)
+            }
+            resolved_fields[field_key] = {
+                obj.id: traversed[obj.id] if obj.id in traversed.keys() else obj
+                for obj in resolved
+            }
+
+        result = []
+        for root in roots:
+            for field, field_ids in resolved_fields.items():
+                if type(getattr(root, field)) == list:
+                    setattr(
+                        root,
+                        field,
+                        [
+                            field_ids[i] if i in field_ids.keys() else i
+                            for i in getattr(root, field)
+                        ],
+                    )
+                elif type(getattr(root, field)) == int:
+                    index = getattr(root, field)
+                    setattr(
+                        root,
+                        field,
+                        field_ids[index] if index in field_ids.keys() else index,
+                    )
+
+            result.append(root)
+
+        return result
