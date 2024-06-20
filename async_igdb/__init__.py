@@ -5,7 +5,7 @@ from .manager import ApiObjectManager
 
 
 class IGDBClient(BaseClient):
-    REGISTRY = {
+    REGISTRY: dict[str, BaseApiModel] = {
         getattr(models, model).type: getattr(models, model)
         for model in [
             i for i in dir(models) if i.endswith("Model") and i != "BaseApiModel"

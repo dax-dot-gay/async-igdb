@@ -21,3 +21,14 @@ from .platform import PlatformModel
 from .external_game import ExternalGameModel
 from .franchise import FranchiseModel
 from .game_engine import GameEngineModel
+from .game_version import (
+    GameVersionFeatureModel,
+    GameVersionFeatureValueModel,
+    GameVersionModel,
+)
+from .involved_company import InvolvedCompanyModel
+from .language_support import LanguageSupportModel
+from .multiplayer_mode import MultiplayerModeModel
+from .release_date import ReleaseDateModel
+from .screenshot import ScreenshotModel
+from .search_result import SearchResultModel

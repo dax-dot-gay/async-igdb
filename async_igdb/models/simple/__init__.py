@@ -11,3 +11,10 @@ from .platform_logo import PlatformLogoModel
 from .platform_family import PlatformFamilyModel
 from .game_engine_logo import GameEngineLogoModel
 from .game_mode import GameModeModel
+from .genre import GenreModel
+from .keyword import KeywordModel
+from .language import LanguageModel
+from .language_support_type import LanguageSupportTypeModel
+from .player_perspective import PlayerPerspectiveModel
+from .release_date_status import ReleaseDateStatusModel
+from .theme import ThemeModel

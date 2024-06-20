@@ -9,7 +9,7 @@ BASE_URL = "https://api.igdb.com/v4/{endpoint}"
 
 
 class BaseClient:
-    REGISTRY: dict[str, "BaseClient"] = {}
+    REGISTRY: dict[str, Any] = {}
 
     def __init__(
         self, client_id: str, access_token: str = None, client_secret: str = None
