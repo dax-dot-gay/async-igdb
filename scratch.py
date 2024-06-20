@@ -14,15 +14,7 @@ async def main():
     client_secret = os.getenv("IGDB_SECRET")
 
     async with IGDBClient(client_id, client_secret=client_secret) as client:
-        result = await client.games.find_one(
-            filter='where name = "Transformers: War for Cybertron"'
-        )
-        if result:
-            with open("test.json", "w") as f:
-                print(
-                    (await result.resolve_links(depth=4)).model_dump_json(indent=4),
-                    file=f,
-                )
+        print(client.REGISTRY)
 
 
 asyncio.run(main())

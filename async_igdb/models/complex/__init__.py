@@ -6,3 +6,18 @@ from .collection_relation import CollectionRelationModel
 from .collection import CollectionModel
 from .collection_membership import CollectionMembershipModel
 from .collection_membership_type import CollectionMembershipTypeModel
+from .company import CompanyModel
+from .cover_game_localization import CoverModel, GameLocalizationModel
+from .game_video import GameVideoModel
+from .events_networks import (
+    EventLogoModel,
+    EventModel,
+    EventNetworkModel,
+    NetworkTypeModel,
+)
+from .platform_version_company import PlatformVersionCompanyModel
+from .platform_version import PlatformVersionModel, PlatformVersionReleaseDateModel
+from .platform import PlatformModel
+from .external_game import ExternalGameModel
+from .franchise import FranchiseModel
+from .game_engine import GameEngineModel

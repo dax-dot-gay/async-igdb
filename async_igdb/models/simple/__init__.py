@@ -5,3 +5,9 @@ from .artwork import ArtworkModel
 from .collection_type import CollectionTypeModel
 from .company_website import CompanyWebsiteModel
 from .company_logo import CompanyLogoModel
+from .region import RegionModel
+from .platform_website import PlatformWebsiteModel
+from .platform_logo import PlatformLogoModel
+from .platform_family import PlatformFamilyModel
+from .game_engine_logo import GameEngineLogoModel
+from .game_mode import GameModeModel

@@ -43,6 +43,7 @@ class BaseApiModel(BaseModel):
     searchable: ClassVar[bool] = False
     fields: ClassVar[list[str] | Literal["*"]] = "*"
     _client: BaseClient
+    # model_config = {"arbitrary_types_allowed": True}
 
     id: int
     created_at: datetime | None = None

@@ -1,5 +1,7 @@
 from datetime import datetime
 from typing import Union
+
+from pydantic import Field
 from ..base import BaseApiModel, ids
 from .collection_relation import CollectionRelationModel
 from ..simple import CollectionTypeModel
@@ -16,4 +18,4 @@ class CollectionModel(BaseApiModel):
     games: ids(GameModel) = []
     name: str | None = None
     slug: str | None = None
-    type: ids(CollectionTypeModel) = None
+    collection_type: ids(CollectionTypeModel) = Field(default=None, alias="type")

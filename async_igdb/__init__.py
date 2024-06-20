@@ -1,25 +1,15 @@
 from .client import BaseClient
 from .models import *
+from . import models
 from .manager import ApiObjectManager
 
 
 class IGDBClient(BaseClient):
     REGISTRY = {
-        "characters": CharacterModel,
-        "games": GameModel,
-        "character_mug_shots": CharacterMugShotModel,
-        "age_ratings": AgeRatingModel,
-        "collection_relation_types": CollectionRelationTypeModel,
-        "collection_relations": CollectionRelationModel,
-        "age_rating_content_descriptions": AgeRatingContentDescriptionModel,
-        "alternative_names": AlternativeNameModel,
-        "artworks": ArtworkModel,
-        "collection_types": CollectionTypeModel,
-        "collections": CollectionModel,
-        "company_logos": CompanyLogoModel,
-        "company_websites": CompanyWebsiteModel,
-        "collection_memberships": CollectionMembershipModel,
-        "collection_membership_types": CollectionMembershipTypeModel,
+        getattr(models, model).type: getattr(models, model)
+        for model in [
+            i for i in dir(models) if i.endswith("Model") and i != "BaseApiModel"
+        ]
     }
 
     @property
@@ -33,3 +23,7 @@ class IGDBClient(BaseClient):
     @property
     def collections(self) -> ApiObjectManager[CollectionModel]:
         return ApiObjectManager[CollectionModel](self, CollectionModel)
+
+    @property
+    def companies(self) -> ApiObjectManager[CompanyModel]:
+        return ApiObjectManager[CompanyModel](self, CompanyModel)
