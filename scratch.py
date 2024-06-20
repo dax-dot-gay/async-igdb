@@ -14,8 +14,13 @@ async def main():
     client_secret = os.getenv("IGDB_SECRET")
 
     async with IGDBClient(client_id, client_secret=client_secret) as client:
-        result = await client.from_uuid("games:60226")
-        print(result)
+        results = await client.games.find(limit=100)
+        final = [
+            i.model_dump(mode="json")
+            for i in await client.resolve_links(results, max_depth=4)
+        ]
+        with open("test.json", "w") as f:
+            json.dump(final, f, indent=4)
 
 
 asyncio.run(main())
