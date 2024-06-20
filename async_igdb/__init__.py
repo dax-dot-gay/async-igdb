@@ -15,6 +15,11 @@ class IGDBClient(BaseClient):
         "alternative_names": AlternativeNameModel,
         "artworks": ArtworkModel,
         "collection_types": CollectionTypeModel,
+        "collections": CollectionModel,
+        "company_logos": CompanyLogoModel,
+        "company_websites": CompanyWebsiteModel,
+        "collection_memberships": CollectionMembershipModel,
+        "collection_membership_types": CollectionMembershipTypeModel,
     }
 
     @property
@@ -24,3 +29,7 @@ class IGDBClient(BaseClient):
     @property
     def games(self) -> ApiObjectManager[GameModel]:
         return ApiObjectManager[GameModel](self, GameModel)
+
+    @property
+    def collections(self) -> ApiObjectManager[CollectionModel]:
+        return ApiObjectManager[CollectionModel](self, CollectionModel)

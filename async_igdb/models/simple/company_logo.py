@@ -4,8 +4,8 @@ from ..base import BaseApiModel, ids
 from ...util.enums import *
 
 
-class CharacterMugShotModel(BaseApiModel):
-    type = "character_mug_shots"
+class CompanyLogoModel(BaseApiModel):
+    type = "company_logos"
     searchable = False
 
     alpha_channel: bool = False

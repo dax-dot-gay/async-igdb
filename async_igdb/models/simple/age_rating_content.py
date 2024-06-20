@@ -9,5 +9,4 @@ class AgeRatingContentDescriptionModel(BaseApiModel):
     searchable = False
 
     category: AgeRatingContentDescriptionEnum | None = None
-    checksum: str | None = None
     description: str | None = None

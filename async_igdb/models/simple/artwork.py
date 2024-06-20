@@ -10,9 +10,7 @@ class ArtworkModel(BaseApiModel):
 
     alpha_channel: bool = False
     animated: bool = False
-    checksum: str | None = None
     game: int | None = None
     height: int = 0
     image_id: str | None = None
-    url: str | None = None
     width: int = 0

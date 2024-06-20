@@ -11,9 +11,7 @@ class CharacterModel(BaseApiModel):
     searchable = True
 
     akas: list[str] = []
-    checksum: str | None = None
     country_name: str | None = None
-    created_at: datetime | None = None
     description: str | None = None
     games: ids(GameModel) = []
     gender: CharacterGenderEnum = CharacterGenderEnum.Other
@@ -21,5 +19,3 @@ class CharacterModel(BaseApiModel):
     name: str | None = None
     slug: str | None = None
     species: CharacterSpeciesEnum = CharacterSpeciesEnum.Unknown
-    updated_at: datetime | None = None
-    url: str | None = None

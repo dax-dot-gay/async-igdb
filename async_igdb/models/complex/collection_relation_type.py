@@ -11,8 +11,5 @@ class CollectionRelationTypeModel(BaseApiModel):
 
     allowed_child_type: ids(CollectionTypeModel) = None
     allowed_parent_type: ids(CollectionTypeModel) = None
-    checksum: str | None = None
-    created_at: datetime | None = None
     description: str | None = None
     name: str | None = None
-    updated_at: datetime | None = None

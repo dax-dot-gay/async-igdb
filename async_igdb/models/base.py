@@ -1,3 +1,4 @@
+from datetime import datetime
 import math
 from typing import Annotated, ClassVar, Literal, Type, TypeVar, get_type_hints
 from pydantic import BaseModel
@@ -44,6 +45,10 @@ class BaseApiModel(BaseModel):
     _client: BaseClient
 
     id: int
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    checksum: str | None = None
+    url: str | None = None
 
     def __init__(self, client: BaseClient = None, **data):
         super().__init__(client=client, **data)

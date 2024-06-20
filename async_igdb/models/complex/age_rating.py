@@ -10,7 +10,6 @@ class AgeRatingModel(BaseApiModel):
     searchable = False
 
     category: AgeRatingCategoryEnum | None = None
-    checksum: str | None = None
     content_descriptions: ids(AgeRatingContentDescriptionModel) = []
     rating: AgeRatingEnum | None = None
     rating_cover_url: str | None = None

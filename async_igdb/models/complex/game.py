@@ -17,11 +17,9 @@ class GameModel(BaseApiModel):
     artworks: ids(ArtworkModel) = []
     bundles: ids("games") | list["GameModel"] = []
     category: GameCategoryEnum = GameCategoryEnum.main_game
-    checksum: str | None = None
     collection: int | None = None
     collections: list[int] = []
     cover: int | None = None
-    created_at: datetime | None = None
     dlcs: ids("games") | list["GameModel"] = []
     expanded_games: ids("games") | list["GameModel"] = []
     expansions: ids("games") | list["GameModel"] = []
@@ -57,8 +55,6 @@ class GameModel(BaseApiModel):
     themes: list[int] = []
     total_rating: float = 0.0
     total_rating_count: int = 0
-    updated_at: datetime | None = None
-    url: str | None = None
     version_parent: Union[ids("games"), "GameModel", None] = None
     version_title: str | None = None
     videos: list[int] = []
