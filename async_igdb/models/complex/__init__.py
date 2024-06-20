@@ -32,3 +32,4 @@ from .multiplayer_mode import MultiplayerModeModel
 from .release_date import ReleaseDateModel
 from .screenshot import ScreenshotModel
 from .search_result import SearchResultModel
+from .website import WebsiteModel

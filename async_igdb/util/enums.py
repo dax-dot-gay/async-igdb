@@ -1,4 +1,12 @@
-from enum import IntEnum
+from enum import IntEnum as BaseIntEnum
+from typing import Any
+
+
+class IntEnum(BaseIntEnum):
+
+    @classmethod
+    def _missing_(cls, value: object) -> Any:
+        return getattr(cls, cls._member_names_[0])
 
 
 class AgeRatingCategoryEnum(IntEnum):

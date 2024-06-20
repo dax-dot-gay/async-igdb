@@ -96,7 +96,8 @@ class BaseClient:
             return await self.request(endpoint, fields=fields, queries=queries)
         else:
             result.raise_for_status()
-        return result.json()
+        data = result.json()
+        return data
 
     async def build_query(
         self,
