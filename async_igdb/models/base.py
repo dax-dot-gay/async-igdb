@@ -1,7 +1,8 @@
 from datetime import datetime
 import math
-from typing import Annotated, ClassVar, Literal, Type, TypeVar, get_type_hints
+from typing import Annotated, Any, ClassVar, Literal, Type, TypeVar, get_type_hints
 from pydantic import BaseModel, computed_field
+from pydantic.functional_serializers import field_serializer
 from ..client import BaseClient
 
 TBase = TypeVar("TBase", bound="BaseApiModel")
@@ -37,9 +38,16 @@ class IDWrapper:
 
 def ids(base: Type[TBase] | str):
     if type(base) == str:
-        return Annotated[list[int] | int, IDWrapper(base)] | None
+        return Annotated[list[int] | int, IDWrapper(base)] | None | Any
     else:
-        return Annotated[list[int] | int, IDWrapper(base)] | TBase | list[TBase] | None
+        return (
+            Annotated[list[int | TBase] | TBase, IDWrapper(base)]
+            | TBase
+            | list[TBase | int]
+            | TBase
+            | None
+            | Any
+        )
 
 
 class BaseApiModel(BaseModel):
@@ -47,8 +55,9 @@ class BaseApiModel(BaseModel):
     searchable: ClassVar[bool] = False
     fields: ClassVar[list[str] | Literal["*"]] = "*"
     _client: BaseClient
-    # model_config = {"arbitrary_types_allowed": True}
+    model_config = {"arbitrary_types_allowed": True, "protected_namespaces": ()}
 
+    model_type: str | None = None
     id: int
     created_at: datetime | None = None
     updated_at: datetime | None = None
@@ -62,7 +71,13 @@ class BaseApiModel(BaseModel):
     @computed_field
     @property
     def uuid(self) -> str:
-        return f"{self.type}:{self.id}"
+        return f"{self.type if self.type else self.model_type}:{self.id}"
+
+    @field_serializer("model_type", when_used="always")
+    def ser_model_type(self, value) -> str:
+        if not self.model_type:
+            return self.type
+        return self.model_type
 
     @classmethod
     async def from_request(
