@@ -126,3 +126,10 @@ class BaseClient:
         queries.append(f"limit {limit}")
         queries.append(f"offset {offset}")
         return await self.request(endpoint, fields, queries=queries)
+    
+    async def from_uuid(self, uuid: str) -> Any | None:
+        endpoint, oid = uuid.split(":")
+        if not endpoint in self.REGISTRY.keys():
+            raise ValueError(f"Unknown UUID endpoint specifier {endpoint}")
+        
+        return await self.REGISTRY[endpoint].from_request(self, ids=[oid])

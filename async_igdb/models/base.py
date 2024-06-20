@@ -1,7 +1,7 @@
 from datetime import datetime
 import math
 from typing import Annotated, ClassVar, Literal, Type, TypeVar, get_type_hints
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 from ..client import BaseClient
 
 TBase = TypeVar("TBase", bound="BaseApiModel")
@@ -54,6 +54,11 @@ class BaseApiModel(BaseModel):
     def __init__(self, client: BaseClient = None, **data):
         super().__init__(client=client, **data)
         self._client = client
+
+    @computed_field
+    @property
+    def uuid(self) -> str:
+        return f"{self.type}:{self.id}"
 
     @classmethod
     async def from_request(
