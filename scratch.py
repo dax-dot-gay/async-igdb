@@ -14,7 +14,7 @@ async def main():
     client_secret = os.getenv("IGDB_SECRET")
 
     async with IGDBClient(client_id, client_secret=client_secret) as client:
-        print(client.REGISTRY)
+        print(client._generate_managers())
 
 
 asyncio.run(main())
