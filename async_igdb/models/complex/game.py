@@ -9,11 +9,11 @@ class GameModel(BaseApiModel):
     type = "games"
     searchable = True
 
-    age_ratings: ids(AgeRatingModel) = []
+    age_ratings: ids("age_ratings") = []
     aggregated_rating: float = 0.0
     aggregated_rating_count: int = 0
-    alternative_names: ids(AlternativeNameModel) = []
-    artworks: ids(ArtworkModel) = []
+    alternative_names: ids("alternative_names") = []
+    artworks: ids("artworks") = []
     bundles: ids("games") | list["GameModel"] = []
     category: GameCategoryEnum = GameCategoryEnum.main_game
     collection: ids("collections") | Any = None

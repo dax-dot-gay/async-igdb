@@ -15,7 +15,9 @@ async def main():
     async with IGDBClient(client_id, client_secret=client_secret) as client:
         results = await client.games.find(limit=100)
         final = [
-            GameModel(**i.model_dump(warnings=False)).model_dump(mode="json")
+            GameModel(client=client, **i.model_dump(warnings=False)).model_dump(
+                mode="json"
+            )
             for i in await client.resolve_links(results, max_depth=1)
         ]
         with open("test.json", "w") as f:

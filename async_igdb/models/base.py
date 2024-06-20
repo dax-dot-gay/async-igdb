@@ -1,8 +1,18 @@
 from datetime import datetime
 import math
-from typing import Annotated, Any, ClassVar, Literal, Type, TypeVar, get_type_hints
+from typing import (
+    Annotated,
+    Any,
+    ClassVar,
+    Literal,
+    Self,
+    Type,
+    TypeVar,
+    get_type_hints,
+)
 from pydantic import BaseModel, computed_field
-from pydantic.functional_serializers import field_serializer
+from pydantic.functional_serializers import SerializeAsAny, field_serializer
+from pydantic.functional_validators import model_validator
 from ..client import BaseClient
 
 TBase = TypeVar("TBase", bound="BaseApiModel")
@@ -78,6 +88,60 @@ class BaseApiModel(BaseModel):
         if not self.model_type:
             return self.type
         return self.model_type
+
+    @model_validator(mode="after")
+    def swap_correct_models(self) -> Self:
+        if not hasattr(self, "_client"):
+            return self
+        if not self.client:
+            return self
+        fields = self.id_fields
+        for field in fields.keys():
+            current = getattr(self, field)
+            if type(current) == list:
+                new_field = []
+                for item in current:
+                    if (
+                        type(item) == dict
+                        and "model_type" in item.keys()
+                        and item["model_type"] in self.client.REGISTRY.keys()
+                    ):
+                        new_field.append(
+                            self.client.REGISTRY[item["model_type"]](
+                                client=self.client, **item
+                            )
+                        )
+                    elif isinstance(item, BaseApiModel):
+                        new_field.append(
+                            self.client.REGISTRY[item.model_type](
+                                client=self.client, **item.model_dump()
+                            )
+                        )
+                    else:
+                        new_field.append(item)
+                setattr(self, field, new_field)
+            elif isinstance(current, BaseApiModel):
+                setattr(
+                    self,
+                    field,
+                    self.client.REGISTRY[current.model_type](
+                        client=self.client, **current.model_dump()
+                    ),
+                )
+            elif (
+                type(current) == dict
+                and "model_type" in current.keys()
+                and current["model_type"] in self.client.REGISTRY.keys()
+            ):
+                setattr(
+                    self,
+                    field,
+                    self.client.REGISTRY[current["model_type"]](
+                        client=self.client, **current
+                    ),
+                )
+
+        return self
 
     @classmethod
     async def from_request(
