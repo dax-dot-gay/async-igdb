@@ -112,22 +112,38 @@ class BaseApiModel(BaseModel):
                             )
                         )
                     elif isinstance(item, BaseApiModel):
-                        new_field.append(
-                            self.client.REGISTRY[item.model_type](
-                                client=self.client, **item.model_dump()
+                        if item.model_type:
+                            new_field.append(
+                                self.client.REGISTRY[item.model_type](
+                                    client=self.client, **item.model_dump()
+                                )
                             )
-                        )
+                        else:
+                            new_field.append(
+                                self.client.REGISTRY[item.type](
+                                    client=self.client, **item.model_dump()
+                                )
+                            )
                     else:
                         new_field.append(item)
                 setattr(self, field, new_field)
             elif isinstance(current, BaseApiModel):
-                setattr(
-                    self,
-                    field,
-                    self.client.REGISTRY[current.model_type](
-                        client=self.client, **current.model_dump()
-                    ),
-                )
+                if current.model_type:
+                    setattr(
+                        self,
+                        field,
+                        self.client.REGISTRY[current.model_type](
+                            client=self.client, **current.model_dump()
+                        ),
+                    )
+                else:
+                    setattr(
+                        self,
+                        field,
+                        self.client.REGISTRY[current.type](
+                            client=self.client, **current.model_dump()
+                        ),
+                    )
             elif (
                 type(current) == dict
                 and "model_type" in current.keys()
